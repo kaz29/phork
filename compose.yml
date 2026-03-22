@@ -30,6 +30,25 @@ services:
       DB_PASSWORD: Passw0rd
     volumes:
       - ./:/srv/app
+  phork-app-8.3:
+    container_name: phork-app-8.3
+    build:
+      context: ./
+      dockerfile: Dockerfile.8.3
+    ports:
+      - '80:80'
+    depends_on:
+      - phork-database
+    environment:
+      DEBUG: 1
+      APP_ENV: development
+      DB_HOST: phork-database
+      DB_PORT: 5432
+      DB_NAME: webapp
+      DB_USER: webapp
+      DB_PASSWORD: Passw0rd
+    volumes:
+      - ./:/srv/app
 
 volumes:
   phork-database-data:
