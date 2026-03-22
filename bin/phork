@@ -1,0 +1,62 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use Phork\JUnitLogParser;
+use Phork\Runner;
+use Phork\TestSplitter;
+
+$options = getopt('', ['workers:', 'log:', 'test-dir:', 'output:']);
+
+$workerCount = isset($options['workers']) ? (int) $options['workers'] : detectCpuCores();
+$logPath = $options['log'] ?? null;
+$testDir = $options['test-dir'] ?? 'tests/';
+$outputPath = $options['output'] ?? $logPath;
+
+$psr4Map = loadPsr4Map(__DIR__ . '/..');
+
+$runner = new Runner(
+    new JUnitLogParser(),
+    new TestSplitter($psr4Map),
+);
+
+exit($runner->run($workerCount, $logPath, $testDir, $outputPath));
+
+/**
+ * @return array<string, string>
+ */
+function loadPsr4Map(string $projectRoot): array
+{
+    $composerJsonPath = rtrim($projectRoot, '/') . '/composer.json';
+    if (!file_exists($composerJsonPath)) {
+        return [];
+    }
+
+    $composer = json_decode(file_get_contents($composerJsonPath), true);
+    if (!is_array($composer)) {
+        return [];
+    }
+
+    $map = [];
+    foreach (['autoload', 'autoload-dev'] as $section) {
+        $psr4 = $composer[$section]['psr-4'] ?? [];
+        foreach ($psr4 as $namespace => $dir) {
+            $map[$namespace] = $dir;
+        }
+    }
+
+    return $map;
+}
+
+function detectCpuCores(): int
+{
+    $cores = shell_exec('nproc 2>/dev/null');
+    if ($cores === null || $cores === '') {
+        $cores = shell_exec('sysctl -n hw.ncpu 2>/dev/null');
+    }
+
+    return max(1, (int) ($cores ?: 2));
+}
