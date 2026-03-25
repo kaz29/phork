@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   phork-database:
     container_name: phork-database
@@ -16,8 +14,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    ports:
-      - '80:80'
     depends_on:
       - phork-database
     environment:
@@ -35,8 +31,6 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile.8.3
-    ports:
-      - '80:80'
     depends_on:
       - phork-database
     environment:
