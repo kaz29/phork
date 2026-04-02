@@ -30,7 +30,7 @@
 ## Installation
 
 ```bash
-composer require kaz29/phork
+composer require --dev kaz29/phork
 ```
 
 ---
@@ -106,6 +106,18 @@ vendor/bin/phpunit --testsuite Unit
 
 # Run integration tests
 vendor/bin/phpunit --testsuite Integration
+```
+
+---
+
+## Database Isolation
+
+When running tests in parallel, each worker needs its own database. Use the `TEST_TOKEN` environment variable provided by paratest in your `bootstrap.php`:
+
+```php
+// tests/bootstrap.php
+$token = getenv('TEST_TOKEN') ?: '1';
+putenv("DB_DATABASE=testdb_{$token}");
 ```
 
 ---

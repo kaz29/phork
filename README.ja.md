@@ -30,7 +30,7 @@
 ## インストール
 
 ```bash
-composer require kaz29/phork
+composer require --dev kaz29/phork
 ```
 
 ---
@@ -106,6 +106,18 @@ vendor/bin/phpunit --testsuite Unit
 
 # インテグレーションテストの実行
 vendor/bin/phpunit --testsuite Integration
+```
+
+---
+
+## データベースの分離
+
+並列テスト実行時は、各ワーカーごとに個別のデータベースが必要です。paratest が提供する `TEST_TOKEN` 環境変数を `bootstrap.php` で使用してください:
+
+```php
+// tests/bootstrap.php
+$token = getenv('TEST_TOKEN') ?: '1';
+putenv("DB_DATABASE=testdb_{$token}");
 ```
 
 ---
