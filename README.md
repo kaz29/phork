@@ -15,7 +15,7 @@
 - **Graceful fallback** – uses round-robin distribution when no prior runtime data is available
 - **Merged JUnit output** – combines per-worker JUnit XML reports into a single file
 - **Auto CPU detection** – automatically picks the number of workers based on available CPU cores
-- **PSR-4 aware** – reads `composer.json` to correctly map file paths to PHP class names
+- **PSR-4 aware** – reads simple PSR-4 mappings in `composer.json` (one directory per namespace) to map file paths to PHP class names
 
 ---
 
@@ -68,6 +68,8 @@ Then use that baseline to balance the next run:
 | `--log=PATH` | *(none)* | Path to a previous JUnit XML file used for runtime-based distribution |
 | `--test-dir=PATH` | `tests/` | Directory to scan for `*Test.php` files |
 | `--output=PATH` | same as `--log` | Path to write the merged JUnit XML result |
+
+> **Note:** If you specify `--log` but omit `--output`, the merged result will overwrite your baseline JUnit file. It is recommended to always set `--output` explicitly.
 
 ---
 
